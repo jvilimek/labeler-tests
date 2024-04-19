@@ -1,0 +1,20 @@
+# Check for the status of the workflows that the commit triggers
+# more info: https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#check_run
+
+name: circle-ci-checks2
+on:
+  check_run:
+    types: [completed]
+
+jobs:
+  circle-ci-workflow-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: report-success
+        if: ${{ github.event.check_suite.conclusion == 'success' }}
+        run: echo 'The check suite finished OK';
+
+      - name: report-failure
+        if: ${{ github.event.check_suite.conclusion != 'success' }}
+        run: |
+          echo 'error: The check suite FAILED' && exit -1;
